@@ -1,0 +1,48 @@
+#pragma kernel CSMain
+
+RWTexture2D<float4> Result;
+int Width;
+int Height;
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    int neighbors = 0;
+    bool isAlive = false;
+        for (int x = -1; x < 2; x++)
+        {
+            for (int y = -1; y < 2; y++)
+            {
+            if (!(x == 0 && y == 0) && Result[int2(id.x + x, id.y + y)].r > 0.8)
+                {
+                    neighbors++;
+                }
+
+            }
+        }
+    
+    if (Result[id.xy].r > 0.8)
+        {
+            if (neighbors == 2 || neighbors == 3)
+            {
+                isAlive = true;
+
+            }
+        }
+        else if (neighbors == 3)
+        {
+            isAlive = true;
+        }
+    
+        if (isAlive)
+        {
+        Result[id.xy] = float4(1, 1, 1, 1);
+
+        }
+        else
+        {
+        Result[id.xy] = float4(0, 0, 0, 1);
+        }
+        
+        
+    }

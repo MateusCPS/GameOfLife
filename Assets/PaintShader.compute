@@ -1,0 +1,31 @@
+#pragma kernel CSMain
+
+RWTexture2D<float4> Result;
+bool isAlive;
+bool isPaint;
+float BrushPosX;
+float BrushPosY;
+float Radius;
+
+
+[numthreads(8, 8, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID)
+{
+    
+    if (isPaint)
+    {
+        if (id.x >= BrushPosX - Radius && id.x <= BrushPosX + Radius &&
+            id.y >= BrushPosY - Radius && id.y <= BrushPosY + Radius)
+        {
+            if (isAlive)
+            {
+                Result[id.xy] = float4(1, 1, 1, 1);
+            }
+            else
+            {
+                Result[id.xy] = float4(0, 0, 0, 1);
+            }
+        }
+
+    }
+}
